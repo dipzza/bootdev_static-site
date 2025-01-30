@@ -1,4 +1,4 @@
-from regex_parse_markdown import extract_markdown_images, extract_markdown_links
+from markdown_parsers import extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 
 def split_nodes(old_nodes, extractor, extracted_to_markdown, text_type):
@@ -13,7 +13,7 @@ def split_nodes(old_nodes, extractor, extracted_to_markdown, text_type):
 
     unprocessed_text = old_node.text
     for match in matches:
-      sections = unprocessed_text.split(extracted_to_markdown(match), 1)
+      sections = unprocessed_text.split(extracted_to_markdown(*match), 1)
     
       if len(sections[0]) > 0:
         new_nodes.append(TextNode(sections[0], TextType.TEXT))
@@ -25,19 +25,17 @@ def split_nodes(old_nodes, extractor, extracted_to_markdown, text_type):
   
   return new_nodes
 
-def extracted_image_to_markdown(image):
-  alt_text, link = image
+def build_markdown_image(alt_text, link):
   return f"![{alt_text}]({link})"
 
-def extracted_link_to_markdown(link):
-  text, url = link
+def build_markdown_link(text, url):
   return f"[{text}]({url})"
 
 def split_nodes_images(old_nodes):
-  return split_nodes(old_nodes, extract_markdown_images, extracted_image_to_markdown, TextType.IMAGE)
+  return split_nodes(old_nodes, extract_markdown_images, build_markdown_image, TextType.IMAGE)
 
 def split_nodes_links(old_nodes):
-  return split_nodes(old_nodes, extract_markdown_links, extracted_link_to_markdown, TextType.LINK)
+  return split_nodes(old_nodes, extract_markdown_links, build_markdown_link, TextType.LINK)
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):

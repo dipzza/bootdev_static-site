@@ -17,7 +17,7 @@ def block_to_block_type(markdown):
   lines = markdown.split("\n")
   if all(line.startswith(">") for line in lines):
       return BlockType.QUOTE
-  if all(line.startswith("*") or line.startswith("-") for line in lines):
+  if all(line.startswith("* ") or line.startswith("- ") for line in lines):
       return BlockType.UNORDERED_LIST
   
   is_ordered_list = True
